@@ -13,9 +13,13 @@ matrix:
       sudo: true
       addons:
        apt:
-         packages: &precise_latest_boost_packages
+         packages:
            - texlive-full
-    
+           - texlive-latex-extra
+           - texlive-fonts-extra
+           - texlive-lang-cyrillic
+           - texlive-langgreek
+ 
 install:
     
     # Download and install recent cmake
