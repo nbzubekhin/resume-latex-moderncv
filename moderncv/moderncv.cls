@@ -155,13 +155,13 @@
           \settowidth{\pagenumberwidth}{\color{color2}\addressfont\itshape\strut\thepage/\pageref{lastpage}}%
           \fancypagestyle{plain}{%
             \fancyfoot[r]{\parbox[b]{\pagenumberwidth}{\color{color2}\pagenumberfont\strut\thepage/\pageref{lastpage}}}}% the parbox is required to ensure alignment with a possible center footer (e.g., as in the casual style)
-          \pagestyle{plain}}{}}\fi}%
-  \AtEndDocument{\label{lastpage}}}
+          \pagestyle{plain}}{}}%
+      \AtEndDocument{\label{lastpage}}\else\fi}}
 \pagestyle{plain}
 
 % reduced list spacing
 % package providing hooks into lists
-%   originally developped by Jakob Schiotz (see http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/tweaklist.sty)
+%   originally developped by Jakob Schiøtz (see http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/tweaklist.sty)
 %   modified and distributed with moderncv(not available otherwise on ctan)
 \RequirePackage{tweaklist}
 \renewcommand*{\itemhook}{%
@@ -191,7 +191,6 @@
 % compatibility package with older versions of moderncv
 \RequirePackageWithOptions{moderncvcompatibility}
 
-\RequirePackage{l3regex}
 
 %-------------------------------------------------------------------------------
 %                class definition
@@ -248,26 +247,18 @@
 % usage: \phone[<optional type>]{<number>}
 % where <optional type> should be either "fixed" (default), "mobile" or "fax
 \collectionnew{phones}
-\NewDocumentCommand{\phone}{O{fixed}m}{%
-  \ifthenelse{\equal{#1}{fax}}%
-    {\collectionadd[#1]{phones}{#2}}
-    {\collectionadd[#1]{phones}{\protect\tellink{#2}}}
-    }
-
+\newcommand*{\phone}[2][fixed]{\collectionadd[#1]{phones}{#2}}
 
 % adds a social link to one's personal information (optional)
 % usage: \social[<optional type>][<optional url>]{<account name>}
-% where <optional type> should be either "linkedin", "xing", "twitter", "github", "gitlab" or "skype"
+% where <optional type> should be either "linkedin", "twitter" or "github"
 \collectionnew{socials}
 \NewDocumentCommand{\social}{O{}O{}m}{%
   \ifthenelse{\equal{#2}{}}%
     {%
-      \ifthenelse{\equal{#1}{linkedin}}{\collectionadd[linkedin]{socials}{\protect\httplink[#3]{www.linkedin.com/in/#3}}} {}%
-      \ifthenelse{\equal{#1}{xing}}    {\collectionadd[xing]{socials}    {\protect\httplink[#3]{www.xing.com/profile/#3}}}{}%
-      \ifthenelse{\equal{#1}{twitter}} {\collectionadd[twitter]{socials} {\protect\httplink[#3]{www.twitter.com/#3}}}     {}%
-      \ifthenelse{\equal{#1}{github}}  {\collectionadd[github]{socials}  {\protect\httplink[#3]{www.github.com/#3}}}      {}%
-      \ifthenelse{\equal{#1}{gitlab}}  {\collectionadd[gitlab]{socials}  {\protect\httplink[#3]{www.gitlab.com/#3}}}      {}%
-      \ifthenelse{\equal{#1}{skype}}   {\collectionadd[skype]{socials}   {#3}}                                            {}%
+      \ifthenelse{\equal{#1}{linkedin}}{\collectionadd[linkedin]{socials}{\protect\httplink[#3]{www.linkedin.com/in/#3}}}{}%
+      \ifthenelse{\equal{#1}{twitter}} {\collectionadd[twitter]{socials} {\protect\httplink[#3]{www.twitter.com/#3}}}    {}%
+      \ifthenelse{\equal{#1}{github}}  {\collectionadd[github]{socials}  {\protect\httplink[#3]{www.github.com/#3}}}     {}%
     }
     {\collectionadd[#1]{socials}{\protect\httplink[#3]{#2}}}}
 
@@ -305,11 +296,8 @@
 \newcommand*{\emailsymbol}         {}
 \newcommand*{\homepagesymbol}      {}
 \newcommand*{\linkedinsocialsymbol}{}
-\newcommand*{\xingsocialsymbol}    {}
 \newcommand*{\twittersocialsymbol} {}
 \newcommand*{\githubsocialsymbol}  {}
-\newcommand*{\gitlabsocialsymbol}  {}
-\newcommand*{\skypesocialsymbol}   {}
 
 % other
 %------
@@ -324,39 +312,34 @@
 % usage: \makefooter
 \newcommand*{\makefooter}{}%
 
-\newcommand*{\@loadmoderncvpackage}[3][]{%
-  \begingroup\edef\x{\endgroup%
-    \noexpand\RequirePackage[#1]{moderncv#2\ifcase#3\or i\or ii\or iii\or iv\or v\or vi\or vii\or viii\or ix\or x\fi}%
-  }\x}
-
 % loads a style variant (a combination of header, body and footer)
 % usage: \moderncvstyle{<style variant name>}
-\newcommand*{\moderncvstyle}[2][]{%
+\newcommand*{\moderncvstyle}[2][]{
   \RequirePackage[#1]{moderncvstyle#2}}
 
 % loads a header variant
 % usage: \moderncvhead[<optional head option>]{<header variant number>}
-\newcommand*{\moderncvhead}[2][]{%
-  \@loadmoderncvpackage[#1]{head}{#2}}
+\newcommand*{\moderncvhead}[2][]{
+  \expandafter\RequirePackage\expandafter[\expandafter#1\expandafter]{\expandafter moderncvhead\romannumeral #2}}
 
 % loads a body variant
 % usage: \moderncvbody[<optional body option>]{<body variant number>}
-\newcommand*{\moderncvbody}[2][]{%
-  \@loadmoderncvpackage[#1]{body}{#2}}
+\newcommand*{\moderncvbody}[2][]{
+  \expandafter\RequirePackage\expandafter[\expandafter#1\expandafter]{\expandafter moderncvbody\romannumeral #2}}
 
 % loads a footer variant
-% usage: \moderncvfoot[<optional foot option>]{<foot variant number>}
-\newcommand*{\moderncvfoot}[2][]{%
-  \@loadmoderncvpackage[#1]{foot}{#2}}
+% usage: \moderncvfoot{<footer variant number>}
+\newcommand*{\moderncvfoot}[1]{
+  \expandafter\RequirePackage\expandafter{\expandafter moderncvfoot\romannumeral #1}}
   
 % loads a color scheme
 % usage: \moderncvcolor{<color scheme name>}
-\newcommand*{\moderncvcolor}[1]{%
+\newcommand*{\moderncvcolor}[1]{
   \RequirePackage{moderncvcolor#1}}
 
 % loads an icons set
 % usage: \moderncvicons{<icon set name>}
-\newcommand*{\moderncvicons}[1]{%
+\newcommand*{\moderncvicons}[1]{
   \RequirePackage{moderncvicons#1}}
 
 % recomputes all automatic lengths
@@ -513,22 +496,6 @@
   \ifthenelse{\equal{#1}{}}%
     {\href{mailto:#2}{#2}}%
     {\href{mailto:#2}{#1}}}
-    
-% makes a tel hyperlink
-% usage: \tellink[optional text]{link}
-\newcommand*{\tellink}[2][]{%
-  \ifthenelse{\equal{#1}{}}%
-    {\expandafter\onlynumberslink\expandafter{#2}{#2}}%
-    {\expandafter\onlynumberslink\expandafter{#2}{#1}}}
-
-\ExplSyntaxOn
-\tl_new:N \l_onlynumberslink_tl
-\cs_new:Npn \onlynumberslink #1 #2  {
-    \tl_set:Nn \l_onlynumberslink_tl {#1}
-    \regex_replace_all:nnN {[^0-9+]} {} \l_onlynumberslink_tl
-    \href{ tel\token_to_str:N : \tl_use:N \l_onlynumberslink_tl}{ #2 }
-}
-\ExplSyntaxOff
 
 % cvcolumns environment, where every column is created through \cvcolumn
 % usage: \begin{cvcolumns}
