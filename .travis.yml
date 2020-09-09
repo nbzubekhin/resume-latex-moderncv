@@ -3,7 +3,7 @@ language: generic
 env:
   global:
     # Ubuntu version
-    - LINUX_DIST=trusty
+    - LINUX_DIST=bionic
     - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
 
 matrix:
@@ -19,6 +19,8 @@ matrix:
            - texlive-fonts-extra
            - texlive-lang-cyrillic
            - texlive-lang-greek
+           - texlive-bibtex-extra
+           - texlive-fonts-extra
  
 install:
     
