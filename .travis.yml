@@ -18,7 +18,7 @@ matrix:
            - texlive-latex-extra
            - texlive-fonts-extra
            - texlive-lang-cyrillic
-           - texlive-langgreek
+           - texlive-lang-greek
  
 install:
     
